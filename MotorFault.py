@@ -49,6 +49,11 @@ while True:
         ampsA2 = ampsA[2]
         ampsA3 = ampsA[3]
 
+        print("data 1 : ", ampsA0)
+        print("data 2 : ", ampsA1)
+        print("data 3 : ", ampsA2)
+        print("data 4 : ", ampsA3)
+
     except KeyboardInterrupt:
         print('Kamu Kembali dari program')
         sys.exit()
