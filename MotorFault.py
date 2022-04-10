@@ -11,6 +11,7 @@ adc = Adafruit_ADS1x15.ADS1015(address=0x48, busnum=1)
 GAIN_A = 4
 samples = 200
 places = int(2)
+time_elapsed = (0)
 
 while True:
     try:
@@ -29,7 +30,7 @@ while True:
         while count < samples:
             count +=1
 
-            for i in range(0,4):
+            for i in range(0, 4):
                 data[i] = abs(adc.read_adc(i, gain=GAIN_A))
 
                 if data[i] > maxValue[i]:
