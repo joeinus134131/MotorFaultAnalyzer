@@ -5,6 +5,7 @@ import math
 import re
 import datetime
 import Adafruit_ADS1x15
+from references import LINEV
 
 adc = Adafruit_ADS1x15.ADS1015(address=0x48, busnum=1)
 
@@ -53,7 +54,13 @@ while True:
         print("data 2 : ", ampsA1)
         print("data 3 : ", ampsA2)
         print("data 4 : ", ampsA3)
+        
+        kilowatts = round((ampsA0+ampsA1+ampsA2+ampsA3)*LINEV/1000, places)
 
+        kwh = round((kilowatts*time_elapsed)/3600,8)
+
+        print("kwh : ", kwh)
+        
     except KeyboardInterrupt:
         print('Kamu Kembali dari program')
         sys.exit()
