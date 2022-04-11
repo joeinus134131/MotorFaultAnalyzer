@@ -70,13 +70,13 @@ while True:
                     }
 
                 
-                csv_writer.writerow(info)
-                print(x_value, maxValue)
+            csv_writer.writerow(info)
+            print(x_value, maxValue)
          
-                x_value += 1
-                tegangan1 = chan1.voltage
-                tegangan2 = chan2.voltage
-                nilai = chan2.value
+            x_value += 1
+            tegangan1 = chan1.voltage
+            tegangan2 = chan2.voltage
+            nilai = chan2.value
                 
     except KeyboardInterrupt:
             print('Program Dihentikan')
