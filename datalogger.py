@@ -2,17 +2,20 @@
 Python Algorithm Untuk Data Logger Pembacaan Tegangan dan Arus Listrik
 Develop by : Made Agus Andi Gunawan
 IDN Maker Space Algoritm Factory
-
 '''
 
 # Import Library
-import csv
 import random
 import time
 import sys
 import board
 import math
 import busio
+from time import sleep
+from tkinter import *
+from tkinter import messagebox
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import adafruit_ads1x15.ads1015 as ADS
 from matplotlib.animation import FuncAnimation
 from adafruit_ads1x15.analog_in import AnalogIn
@@ -24,8 +27,6 @@ i2c = busio.I2C(board.SCL, board.SDA)
 ads = ADS.ADS1015(i2c)
 
 # Variabel masukan analog A0-A3
-chan1 = AnalogIn(ads, ADS.P0)
-chan2 = AnalogIn(ads, ADS.P1)
 
 # Definisi variabel
 x_value = 0
@@ -34,54 +35,29 @@ nilai =0
 tegangan2 = 0
 samples = 200
 
-# pembuatan header file CSV
-fieldname = ["x_value", "tegangan 1", "tegangan 2", "teganganrms", "nilai", "bacaan"]
-
-with open('data.csv', 'w') as csv_file:
-    csv_writer = csv.DictWriter(csv_file, fieldnames=fieldname)
-    csv_writer.writeheader()
-
 # Perulangan pengambilan data sensor
 while True:
-    try:
-        with open('data.csv', 'a') as csv_file:
-            csv_writer = csv.DictWriter(csv_file, fieldnames=fieldname)
+    try:      
+        count = int(0)
+        readVal = [0]*4
+        IrmsA = [0]*4
+        ampsA = [0] * 4
+        maxValue = 0
+        voltage = float(0)
             
-            count = int(0)
-            readVal = 0
-            IrmsA = 0
-            ampsA = 0
-            maxValue = 0
-            voltage = float(0)
-            
-            while count < samples:
-                count +=1
+        while count < samples:
+            count +=1
                 
-                readVal= float(chan2.value)
+            for i in range(0,4):
+                chan[i] = AnalogIn(ads, ADS.P[i])
                 
-                if readVal > maxValue:
-                    maxValue = readVal
+                readVal= float(chan[i].voltage)
                 
-                    print("max value ", maxValue)
-                    
-                    info={
-                        "x_value" : x_value,
-                        "tegangan 1" : tegangan1,
-                    }
-
+                if readVal[i] > maxValue[i]:
+                    maxValue[i] = readVal[i]
                 
-            csv_writer.writerow(info)
-            print(x_value, maxValue)
-         
-            x_value += 1
-            tegangan1 = chan1.voltage
-            tegangan2 = chan2.voltage
-            nilai = chan2.value
+                    print("max value ", maxValue[i])
                 
     except KeyboardInterrupt:
             print('Program Dihentikan')
             sys.exit()
-    
-        
-
-

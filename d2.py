@@ -1,4 +1,4 @@
-import button1
+import d1
 import tkinter as tk
 
 window = tk.Tk()
