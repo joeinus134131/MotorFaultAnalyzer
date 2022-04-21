@@ -42,7 +42,7 @@ while True:
         readVal = [0]*4
         IrmsA = [0]*4
         ampsA = [0] * 4
-        maxValue = 0
+        maxValue = [0] * 4
         voltage = float(0)
             
         while count < samples:
