@@ -1,4 +1,4 @@
-import d1
+import Uji.d1 as d1
 import tkinter as tk
 
 window = tk.Tk()
