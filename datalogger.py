@@ -56,7 +56,12 @@ while True:
                 if readVal[i] > maxValue[i]:
                     maxValue[i] = readVal[i]
                 
-                    print("max value ", maxValue[i])
+                    #print("max value ", maxValue[i])
+
+        sensor1 = maxValue[0]  
+        sensor2 = maxValue[1]
+        sensor3 = maxValue[2]
+        sensor4 = maxValue[3]
                 
     except KeyboardInterrupt:
             print('Program Dihentikan')
