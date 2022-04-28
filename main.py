@@ -36,7 +36,7 @@ window = tk.Tk()
 #window.resizable(width=False, height=False)
 #window.iconbitmap('logo_itera_oke_bvD_icon.ico')
 
-window.title("Tugas Akhir 2022")
+window.title("SMTPA(Smart Motor 3 Phase Analyzer)")
 
 plt.style.use('dark_background')
 
