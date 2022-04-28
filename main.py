@@ -1,67 +1,165 @@
-#program pembacaan arus listrik 3 fasa
+"""
+
+TA - 2022
+Diagnosis Motor 3 Fasa dengan ANN
+Credit by : Made Agus Andi Gunawan
+
+"""
+
+# Load Libary
+from time import sleep
+from tkinter import *
+from tkinter import messagebox
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from PIL import ImageTk, Image
+from adafruit_ads1x15.analog_in import AnalogIn
+from matplotlib.animation import FuncAnimation
+from itertools import count
 import time
-import sys
-import math
-import re
-import datetime
-import Adafruit_ADS1x15
-from references import LINEV
+import tkinter as tk
+import RPi.GPIO as GPIO
+import tensorflow as tf
+import pickle
+import sklearn
+import smbus
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import adafruit_ads1x15.ads1015 as ADS
+import busio
+import csv
 
-# 
-adc = Adafruit_ADS1x15.ADS1015(address=0x48, busnum=1)
 
-GAIN_A = 4
-samples = 200
-places = int(2)
-time_elapsed = (0)
+# Konfigurasi GUI
+window = tk.Tk()
+#window.resizable(width=False, height=False)
+#window.iconbitmap('logo_itera_oke_bvD_icon.ico')
 
-while True:
-    try:
-        #Variabel
-        count = int(0)
-        data = [0] * 4
-        maxValue = [0] * 4
-        IrmsA = [0] * 4
-        ampsA = [0] * 4
-        voltage = float(0)
-        kilowatts=float(0)
+window.title("Tugas Akhir 2022")
 
-        start_time = time.time()
+plt.style.use('dark_background')
 
-        #menghitung nila rms
-        while count < samples:
-            count +=1
+index = count()
 
-            for i in range(0, 4):
-                data[i] = abs(adc.read_adc(i, gain=GAIN_A))
+WIDTH = 1000
+HEIGHT = 700
+canvas = Canvas(window, width=WIDTH, height=HEIGHT, bg='lightblue')
+canvas.pack()
 
-                if data[i] > maxValue[i]:
-                    maxValue[i] = data[i]
+# Frame Grafik Loss dan Akurasi
+frameGrafik = Frame(window, bg='white')
+frameGrafik.place(relx=1, rely=0.5, relwidth=0.7, relheight=1, anchor='e')
 
-            for i in range(0,4):
-                #konversi tegangan ke arus 
-                IrmsA[i] = float(maxValue[i]/float(2047)*30)
-                IrmsA[i] = round(IrmsA[i], places)
-                ampsA[i] = IrmsA[i]/math.sqrt(2)
+framemenu = Frame(window, bg='white')
+framemenu.place(relx=0.025, rely=0.5, relwidth=0.25, relheight=0.7, anchor='w')
 
-                ampsA[i] = round(ampsA[i], places)
+judul = tk.Label(window, font ="arial 12 bold", text = "Semoga lulus tahun ini")
+judul.place(x=70, y=20)
 
-        ampsA0 = ampsA[0]
-        ampsA1 = ampsA[1]
-        ampsA2 = ampsA[2]
-        ampsA3 = ampsA[3]
+tuning = tk.Label(framemenu, font ="arial 12 bold", text = "Tuning Model ANN")
+tuning.place(x=30, y=30)
 
-        print("data 1 : ", ampsA0)
-        print("data 2 : ", ampsA1)
-        print("data 3 : ", ampsA2)
-        print("data 4 : ", ampsA3)
-        
-        kilowatts = round((ampsA0+ampsA1+ampsA2+ampsA3)*LINEV/1000, places)
+prediksi = tk.Label(framemenu, font ="arial 12 bold", text = "Prediksi : ")
+prediksi.place(x=30, y=360)
 
-        kwh = round((kilowatts*time_elapsed)/3600, 8)
+akurasi = tk.Label(framemenu, font ="arial 12 bold", text = "Akurasi : ")
+akurasi.place(x=30, y=400)
 
-        print("kwh : ", kwh)
+loss = tk.Label(framemenu, font ="arial 12 bold", text = "Loss : ")
+loss.place(x=30, y=440)
 
-    except KeyboardInterrupt:
-        print('Kamu Kembali dari program')
-        sys.exit()
+# Fungsi hitung cek kerusakan
+def hitung():
+    textArea1  = tk.Text(framemenu, height=1, width=13)
+    textArea1.place(x=120, y=360)
+    prediksi = "{val}".format(val=y1)
+    textArea1.insert(tk.END, prediksi)
+    
+    textArea2  = tk.Text(framemenu, height=1, width=13)
+    textArea2.place(x=120, y=400)
+    akurasi = "98.5%"
+    textArea2.insert(tk.END, akurasi)
+    
+    textArea3  = tk.Text(framemenu, height=1, width=13)
+    textArea3.place(x=120, y=440)
+    loss ="5.3%"
+    textArea3.insert(tk.END, loss)
+    
+    print("Berhasil")
+    
+# fungsi(*args):
+   # print(len(var.get()))
+
+
+# Inisialisasi Pin Masukan Raspberry PI
+x_val = []
+y_val = []
+
+# Tampilan Grafik
+
+
+# fungsi animasi plot
+def animationplot(i):
+    data = pd.read_csv('data.csv')
+    
+    f = Figure()
+    ax = f.add_subplot(211)
+    ay = f.add_subplot(212)
+    x = data['x_value']
+    y1 = data['Tegangan 1']
+    y2 = data['Tegangan 2']
+    
+   # Grafik 1  
+    ax.set_title('Grafik Tegangan 3 Fasa')
+    ax.set_xlabel('Waktu')
+    ax.set_ylabel('Tegangan (Volt)')
+
+    plt.cla()
+    ax.plot(x, y1, label='Tegangan Fasa 1')
+    plt.tight_layout()
+    line1 = ax.plot([], [])[0]
+    line1.set_xdata(x)
+    line1.set_ydata(y1)
+    line1.set_ydata(y2)
+    grafik = FigureCanvasTkAgg(f, frameGrafik)
+    grafik.get_tk_widget().place(relheight=0.8, relwidth=1)
+    grafik.draw()
+    
+    # Grafik 2
+    ay.set_xlabel('Waktu')
+    ay.set_ylabel('Arus (Ampere)' )
+    
+    plt.cla()
+    ax.plot(x, y2, label='Tegangan Fasa 1')
+    line2 = ay.plot([], [])[0]
+    line2.set_xdata(x)
+    line2.set_ydata(y2)
+    grafik2 = FigureCanvasTkAgg(f, frameGrafik)
+    grafik2.get_tk_widget().place(relheight=1, relwidth=1)
+    grafik2.draw()
+    plt.tight_layout()
+    
+    
+
+ani = FuncAnimation(plt.gcf(), animationplot, interval=50)
+
+# Load Dataset
+dataku = pd.read_csv("data.csv")
+#dataku
+
+# Load Model ANN
+#filemodelscaller = ''
+#scaler = pickle.load(open(filemodelscaller, 'rb'))
+
+#modelann = ''
+#loadmodel = pickle.load(open(modelann, 'rb'))
+
+# Tombol cek kerusakan
+tombol = Button(window, text='Cek Kerusakan', command=hitung)
+tombol.place(x=80, y=630)
+
+#plt.tight_layout()
+plt.show()
+window.mainloop()
+

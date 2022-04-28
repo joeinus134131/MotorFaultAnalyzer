@@ -191,7 +191,7 @@ while True:
     # Calculate total AMPS from all sensors and convert to kilowatts
     kilowatts = round((ampsA0 + ampsA1 + ampsA2 + ampsA3 + ampsB0 + ampsB1 + ampsB2 + ampsB3) * LINEV/1000,places)
 
-    # Get current month, day, hour for rate schedule calculations
+    # Get current month, day, hour for ra   te schedule calculations
     date = datetime.date.today()
     month = datetime.date.today().month
     day = datetime.date.today().day
