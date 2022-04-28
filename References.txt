@@ -1,3 +1,5 @@
 https://www.digikey.com/en/maker/projects/graph-sensor-data-with-python-and-matplotlib/93f919fd4e134c48bc5cd2bc0e5a5ba2
 https://github.com/pahowart/ampread
 https://www.hackster.io/michael-nigbor/homeenergy-pi-cecfdf
+https://towardsdatascience.com/industrial-motor-fault-classification-using-deep-learning-with-iot-implications-fd36ddc8ad5b 
+https://github.com/milank94/motor-fault-classification

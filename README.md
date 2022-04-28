@@ -10,3 +10,11 @@ Algoritma jaringan saraf tiruan
 2. jaringan fungsi basis radial
 3. korelasi kaskade
 4. jaringan tautan fungsional
+
+Menggunakan jenis jaringan saraf
+- Feedforward back Propagation
+- Multiclass Clasification
+
+Perhitungan Error 
+1. RMSE
+2. MSE
