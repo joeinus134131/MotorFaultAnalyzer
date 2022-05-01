@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import tkinter as tk
 
+def hitung():
+    print("hitung")
 class GUI:
     window = tk.Tk()
     window.title("Halaman uji")

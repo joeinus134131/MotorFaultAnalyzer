@@ -11,6 +11,7 @@ import tensorflow as tf
 from ann_visualizer.visualize import ann_viz
 
 
+# Load dataset
 dataset = pd.read_csv("/home/pi/Documents/TA2022/datalog.csv")
 X = dataset.iloc[:, 0:8]
 y = dataset.iloc[:, 8]
@@ -38,17 +39,17 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random
 
 # Arsitektur Model ANN
 model = Sequential()
-model.add(Dense(12, input_dim=8, activation='tanh'))
+model.add(Dense(4, input_dim=8, activation='tanh'))
 model.add(Dropout(0.2))
-model.add(Dense(8, activation='tanh'))
+model.add(Dense(5, activation='tanh'))
 model.add(BatchNormalization())
-model.add(Dense(1, activation='sigmoid'))
+model.add(Dense(3, activation='softmax'))
 
 # Visualisasi Model
 # ann_viz(model, view=True, filename='TA_ann.gv', title='Visualisasi ANN TA')
 
 # Compile Model ANN
-model.compile(optimizer= 'RMSprop', loss='MSE', metrics=['accuracy'])
+model.compile(optimizer= 'RMSprop', loss=tf.keras losses.SparseCategoricalCrossentrophy(), metrics=['accuracy'])
 
 # Training Model ANN
 history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=100, batch_size=32)
