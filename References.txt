@@ -3,3 +3,6 @@ https://github.com/pahowart/ampread
 https://www.hackster.io/michael-nigbor/homeenergy-pi-cecfdf
 https://towardsdatascience.com/industrial-motor-fault-classification-using-deep-learning-with-iot-implications-fd36ddc8ad5b 
 https://github.com/milank94/motor-fault-classification
+https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/RMSprop
+http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf
+https://github.com/mrdbourke/tensorflow-deep-learning/blob/main/02_neural_network_classification_in_tensorflow.ipynb
