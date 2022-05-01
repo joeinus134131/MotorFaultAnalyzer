@@ -25,7 +25,7 @@ sc = StandardScaler()
 # Transformasi data tabular ke array dengan StandardScaller transform
 X = sc.fit_transform(X)
 
-# Setting Optimizers
+# Setting Optimizers (rujukan ada di referensi)
 RMSprop(
     learning_rate=0.001,
     rho=0.9,
@@ -49,7 +49,7 @@ model.add(Dense(3, activation='softmax'))
 # ann_viz(model, view=True, filename='TA_ann.gv', title='Visualisasi ANN TA')
 
 # Compile Model ANN
-model.compile(optimizer= 'RMSprop', loss=tf.keras losses.SparseCategoricalCrossentrophy(), metrics=['accuracy'])
+model.compile(optimizer= 'RMSprop', loss=tf.keras losses.CategoricalCrossentrophy(), metrics=['accuracy'])
 
 # Training Model ANN
 history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=100, batch_size=32)
@@ -61,11 +61,13 @@ prediksi = model.predict(X_test)
 score = model.evaluate(X_test, y_test, batch_size=32)
 print("Score model :", score)
 
-# Save Model
-model.save('modelann.h5')
+# fungsi Save Model
+def simpanmodel():
+    model.save('modelann.h5')
 
-# Load Model
-modelku = load_model('modelann.h5')
+# fungsi Load Model
+def loadmodel():
+    modelku = load_model('modelann.h5')
 
 # list histori
 print(history.history.keys())
