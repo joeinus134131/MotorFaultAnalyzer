@@ -1,75 +1,98 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 import pandas as pd
-from keras.models import Sequential
-from keras.layers import Dense, BatchNormalization, Dropout
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.optimizers import RMSprop
-from keras.models import load_model
 import tensorflow as tf
-from ann_visualizer.visualize import ann_viz
 
+from keras.models import Sequential
+from keras.layers import Dense, Dropout
+import keras.backend as K
+from keras.losses import categorical_crossentropy
 
-# Load dataset
-dataset = pd.read_csv("/home/pi/Documents/TA2022/datalog.csv")
-X = dataset.iloc[:, 0:8]
-y = dataset.iloc[:, 8]
+# Training data test
+from sklearn.model_selection import train_test_split
 
-# Melihat dataset
-print(dataset.head())
+# scaling data
+from sklearn.preprocessing import StandardScaler
 
-# Standarisasi Datasets
+# Laporan Klasifikasi
+from sklearn.metrics import classification_report
+from keras.utils.np_utils import to_categorical
+from sklearn.metrics import confusion_matrix
+
+# membuat data frame
+df = pd.read_csv('data.csv')
+
+# menghilangkan missing value
+na = pd.notnull(df["Position"])
+df = df[na]
+
+df = df[["Position", 'Finishing', 'HeadingAccuracy', 'ShortPassing', 'Volleys', 'Dribbling',
+       'Curve', 'FKAccuracy', 'LongPassing', 'BallControl', 'Acceleration',
+       'SprintSpeed', 'Agility', 'Reactions', 'Balance', 'ShotPower',
+       'Jumping', 'Stamina', 'Strength', 'LongShots', 'Aggression',
+       'Interceptions', 'Positioning', 'Vision', 'Penalties', 'Composure',
+       'Marking', 'StandingTackle', 'SlidingTackle', 'GKDiving', 'GKHandling',
+       'GKKicking', 'GKPositioning', 'GKReflexes']]
+
+forward_player = ["ST", "LW", "RW", "LF", "RF", "RS","LS", "CF"]
+midfielder_player = ["CM","RCM","LCM", "CDM","RDM","LDM", "CAM", "LAM", "RAM", "RM", "LM"]
+defender_player = ["CB", "RCB", "LCB", "LWB", "RWB", "LB", "RB"]
+
+df.loc[df["Position"] == "GK", "Position"] = 0
+
+df.loc[df["Position"].isin(defender_player), "Position"] = 1
+
+df.loc[df["Position"].isin(midfielder_player), "Position"] = 2
+
+df.loc[df["Position"].isin(forward_player), "Position"] = 3
+
+x = df.drop("Position", axis = 1)
 sc = StandardScaler()
+x = pd.DataFrame(sc.fit_transform(x))
+y = df["Position"]
 
-# Transformasi data tabular ke array dengan StandardScaller transform
-X = sc.fit_transform(X)
+# membuat kolom prediksi kategori
+y_cat = to_categorical(y)
 
-# Setting Optimizers (rujukan ada di referensi)
-RMSprop(
-    learning_rate=0.001,
-    rho=0.9,
-    momentum=0.0,
-    epsilon=1e-07,
-    centered=False,
-    name="RMSprop"
-)
+# train test split
+x_train, x_test, y_train, y_test = train_test_split(x.values, y_cat, test_size=0.2)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=32)
-
-# Arsitektur Model ANN
+# membangun model
 model = Sequential()
-model.add(Dense(4, input_dim=8, activation='tanh'))
+model.add(Dense(60, input_shape= (33,), activation= 'relu'))
+model.add(Dense(15, activation='relu'))
 model.add(Dropout(0.2))
-model.add(Dense(5, activation='tanh'))
-model.add(BatchNormalization())
-model.add(Dense(3, activation='softmax'))
+model.add(Dense(4, activation='softmax'))
 
-# Visualisasi Model
-# ann_viz(model, view=True, filename='TA_ann.gv', title='Visualisasi ANN TA')
+# kompilasi model
+model.compile(optimizer='Adam', loss=categorical_crossentropy, metrics=['accuracy'])
 
-# Compile Model ANN
-model.compile(optimizer= 'RMSprop', loss=tf.keras losses.CategoricalCrossentrophy(), metrics=['accuracy'])
+# convert model
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
 
-# Training Model ANN
-history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=100, batch_size=32)
+# simpan model
+with open('model.tflite', 'wb') as f:
+       f.write(tflite_model)
 
-# prediksi model
-prediksi = model.predict(X_test)
+# ringkasan model
+model.summary()
 
-# Evaluasi Model
-score = model.evaluate(X_test, y_test, batch_size=32)
-print("Score model :", score)
+history = model.fit(x_train, y_train, validation_data=(x_test, y_test), verbose=True, epochs=10)
 
-# fungsi Save Model
-def simpanmodel():
-    model.save('modelann.h5')
 
-# fungsi Load Model
-def loadmodel():
-    modelku = load_model('modelann.h5')
 
-# list histori
+# confusion matrics
+y_pred_class = model.predict_classes(x_test)
+from sklearn.metrics import confusion_matrix
+y_pred = model.predict(x_test)
+y_test_class = np.argmax(y_test, axis=1)
+confusion_matrix(y_test_class, y_pred_class)
+
+
+#print(classification_report(y_test_class, y_pred_class))
+
 print(history.history.keys())
 
 # grafik akurasi
