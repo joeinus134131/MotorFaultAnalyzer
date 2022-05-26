@@ -38,30 +38,54 @@ samples = 200
 # Perulangan pengambilan data sensor
 while True:
     try:      
-        count = int(0)
-        readVal = [0]*4
-        IrmsA = [0]*4
-        ampsA = [0] * 4
-        maxValue = [0] * 4
-        voltage = float(0)
+        with open('data.csv', 'a') as csv_file:
+            csv_writer = csv.DictWriter(csv_file, fieldnames=fieldname)
             
-        while count < samples:
-            count +=1
+            count = int(0)
+            datasensing = [0]*4
+            dataanalog = [0]*4
+            maxValue = [0]*4
+            Irms = 0
+            amps = 0
+            tegangan = [0]*4
+            #voltage = float(0)
+            
+            while count < samples:
+                count +=1
+                for i in range(0,2):
+                    datasensing[i]= float(chan[i].voltage)
                 
-            for i in range(0,4):
-                chan[i] = AnalogIn(ads, ADS.P[i])
+                    if datasensing[i] > tegangan[i]:
+                        tegangan[i] = datasensing[i]
                 
-                readVal= float(chan[i].voltage)
-                
-                if readVal[i] > maxValue[i]:
-                    maxValue[i] = readVal[i]
-                
-                    #print("max value ", maxValue[i])
+                dataanalog[i] = float(chan[i].value)
+                if dataanalog[i] > maxValue[i]:
+                    maxValue[i] = dataanalog[i]
 
-        sensor1 = maxValue[0]  
-        sensor2 = maxValue[1]
-        sensor3 = maxValue[2]
-        sensor4 = maxValue[3]
+                arus = float(maxValue[3])
+                Irms = float(arus / float(2047) * 30)
+                Irms = round(Irms, adbk)
+                amps = Irms / math.sqrt(2)
+                amps = round(amps, adbk)
+
+                info = {
+                    "x_value": x_value,
+                    "Tegangan 1": tegangan[0],
+                    "Tegangan 2": tegangan[1],
+                    "Tegangan 3": tegangan[2],
+                    "Value": maxValue[0],
+                    "Arus": amps,
+                }
+                
+            csv_writer.writerow(info)
+            print(x_value, tegangan[0], tegangan[1], tegangan[2], maxValue[0], amps)
+         
+            x_value += 1
+            tegangan1 = tegangan[0]
+            tegangan2 = tegangan[1]
+            tegangan3 = tegangan[2]
+            maxValue = maxValue[0]
+            amps = amps
                 
     except KeyboardInterrupt:
             print('Program Dihentikan')
