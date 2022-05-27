@@ -1,6 +1,6 @@
-[![Downloads](http://pepy.tech/badge/shallow-backup)](http://pepy.tech/count/shallow-backup)
-[![Build Status](https://travis-ci.com/alichtman/shallow-backup.svg?branch=master)](https://travis-ci.com/alichtman/shallow-backup)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1719da4d7df5455d8dbb4340c428f851)](https://www.codacy.com/app/alichtman/shallow-backup?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alichtman/shallow-backup&amp;utm_campaign=Badge_Grade)
+[![Downloads](http://pepy.tech/badge/MotorFaultAnalyzer)](http://pepy.tech/count/MotorFaultAnalyzer)
+[![Build Status](https://travis-ci.com/alichtman/MotorFaultAnalyzer.svg?branch=master)](https://travis-ci.com/alichtman/MotorFaultAnalyzer)
+
 
 # MotorFaultAnalyzer
 Detction Motor Fault with Artificial Neural Network
