@@ -1,6 +1,9 @@
-[![Downloads](http://pepy.tech/badge/MotorFaultAnalyzer)](http://pepy.tech/count/MotorFaultAnalyzer)
-[![Build Status](https://travis-ci.com/alichtman/MotorFaultAnalyzer.svg?branch=master)](https://travis-ci.com/alichtman/MotorFaultAnalyzer)
-
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 # MotorFaultAnalyzer
 Detction Motor Fault with Artificial Neural Network
