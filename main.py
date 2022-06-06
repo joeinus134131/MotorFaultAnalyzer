@@ -1,9 +1,7 @@
 """
-
 TA - 2022
 Diagnosis Motor 3 Fasa dengan ANN
 Credit by : Made Agus Andi Gunawan
-
 """
 
 # Load Libary
@@ -30,67 +28,62 @@ import adafruit_ads1x15.ads1015 as ADS
 import busio
 import csv
 
-
 # Konfigurasi GUI
 window = tk.Tk()
 #window.resizable(width=False, height=False)
 #window.iconbitmap('logo_itera_oke_bvD_icon.ico')
 
-window.title("SMTPA(Smart Motor 3 Phase Analyzer)")
+window.title("AMORFTRA (Automatic 3 Phasse Motor Fault Diagnosis Tool ITERA)")
 
 plt.style.use('dark_background')
 
 index = count()
 
-WIDTH = 1000
-HEIGHT = 700
+WIDTH = 840
+HEIGHT = 800
 canvas = Canvas(window, width=WIDTH, height=HEIGHT, bg='lightblue')
 canvas.pack()
 
 # Frame Grafik Loss dan Akurasi
-frameGrafik = Frame(window, bg='white')
+frameGrafik = Frame(window, bg='black')
 frameGrafik.place(relx=1, rely=0.5, relwidth=0.7, relheight=1, anchor='e')
 
 framemenu = Frame(window, bg='white')
-framemenu.place(relx=0.025, rely=0.5, relwidth=0.25, relheight=0.7, anchor='w')
+framemenu.place(relx=0.025, rely=0.5, relwidth=0.25, relheight=0.9, anchor='w')
 
-judul = tk.Label(window, font ="arial 12 bold", text = "Semoga lulus tahun ini")
-judul.place(x=70, y=20)
+judul = tk.Label(window, font ="arial 9", text = "Setting Parameter")
+judul.place(x=30, y=20)
 
-tuning = tk.Label(framemenu, font ="arial 12 bold", text = "Tuning Model ANN")
-tuning.place(x=30, y=30)
+tuning = tk.Label(framemenu, font ="arial 9", text = "Tuning Model ANN")
+tuning.place(x=20, y=40)
 
-prediksi = tk.Label(framemenu, font ="arial 12 bold", text = "Prediksi : ")
-prediksi.place(x=30, y=360)
+prediksi = tk.Label(framemenu, font ="arial 10", text = "Prediksi : ")
+prediksi.place(x=20, y=60)
 
-akurasi = tk.Label(framemenu, font ="arial 12 bold", text = "Akurasi : ")
-akurasi.place(x=30, y=400)
+akurasi = tk.Label(framemenu, font ="arial 10", text = "Akurasi : ")
+akurasi.place(x=20, y=80)
 
-loss = tk.Label(framemenu, font ="arial 12 bold", text = "Loss : ")
-loss.place(x=30, y=440)
+loss = tk.Label(framemenu, font ="arial 10", text = "Loss : ")
+loss.place(x=20, y=110)
 
 # Fungsi hitung cek kerusakan
 def hitung():
     textArea1  = tk.Text(framemenu, height=1, width=13)
-    textArea1.place(x=120, y=360)
+    textArea1.place(x=20, y=130)
     prediksi = "{val}".format(val=y1)
     textArea1.insert(tk.END, prediksi)
     
     textArea2  = tk.Text(framemenu, height=1, width=13)
-    textArea2.place(x=120, y=400)
+    textArea2.place(x=20, y=150)
     akurasi = "98.5%"
     textArea2.insert(tk.END, akurasi)
     
     textArea3  = tk.Text(framemenu, height=1, width=13)
-    textArea3.place(x=120, y=440)
+    textArea3.place(x=20, y=170)
     loss ="5.3%"
     textArea3.insert(tk.END, loss)
     
     print("Berhasil")
-    
-# fungsi(*args):
-   # print(len(var.get()))
-
 
 # Inisialisasi Pin Masukan Raspberry PI
 x_val = []
@@ -98,54 +91,47 @@ y_val = []
 
 # Tampilan Grafik
 
-
 # fungsi animasi plot
 def animationplot(i):
     data = pd.read_csv('data.csv')
     
     f = Figure()
-    ax = f.add_subplot(211)
-    ay = f.add_subplot(212)
     x = data['x_value']
     y1 = data['Tegangan 1']
     y2 = data['Tegangan 2']
+    y3 = data['Tegangan 3']
+    arus = data['Arus']
     
-   # Grafik 1  
-    ax.set_title('Grafik Tegangan 3 Fasa')
-    ax.set_xlabel('Waktu')
-    ax.set_ylabel('Tegangan (Volt)')
+    ax1, ax2 = plt.gcf().get_axes()
+    
+    # Menghapus data grafik
+    ax1.cla()
+    ax2.cla()
+    
+    # Grafik 1  
+    ax1.set_title('Grafik Tegangan & Arus 3 Phase')
+    ax1.set_xlabel('Waktu')
+    ax1.set_ylabel('Tegangan (Volt)')
 
-    plt.cla()
-    ax.plot(x, y1, label='Tegangan Fasa 1')
-    plt.tight_layout()
-    line1 = ax.plot([], [])[0]
-    line1.set_xdata(x)
-    line1.set_ydata(y1)
-    line1.set_ydata(y2)
-    grafik = FigureCanvasTkAgg(f, frameGrafik)
-    grafik.get_tk_widget().place(relheight=0.8, relwidth=1)
-    grafik.draw()
+    ax1.plot(x, y1, 'r', label='Tegangan F1')
+    ax1.plot(x, y2, 'g', label='Tegangan F2')
+    ax1.plot(x, y3, 'b', label='Tegangan F3')
     
     # Grafik 2
-    ay.set_xlabel('Waktu')
-    ay.set_ylabel('Arus (Ampere)' )
+    ax2.set_xlabel('Waktu')
+    ax2.set_ylabel('Arus (Ampere)')
     
-    plt.cla()
-    ax.plot(x, y2, label='Tegangan Fasa 1')
-    line2 = ay.plot([], [])[0]
-    line2.set_xdata(x)
-    line2.set_ydata(y2)
-    grafik2 = FigureCanvasTkAgg(f, frameGrafik)
-    grafik2.get_tk_widget().place(relheight=1, relwidth=1)
-    grafik2.draw()
-    plt.tight_layout()
-    
-    
-
-ani = FuncAnimation(plt.gcf(), animationplot, interval=50)
+    ax2.plot(x, y2, 'y', label="Arus")
+             
+    grafik = FigureCanvasTkAgg(plt.gcf(), frameGrafik)
+    grafik.get_tk_widget().place(relheight=1, relwidth=1)
+    grafik.draw()
+   
+plt.gcf().subplots(2,1)    
+ani = FuncAnimation(plt.gcf(), animationplot, frames=None, init_func=None, fargs=None, save_count=None, cache_frame_data=False, interval=10, blit=False)
 
 # Load Dataset
-dataku = pd.read_csv("data.csv")
+#dataku = pd.read_csv("data.csv")
 #dataku
 
 # Load Model ANN
@@ -157,9 +143,9 @@ dataku = pd.read_csv("data.csv")
 
 # Tombol cek kerusakan
 tombol = Button(window, text='Cek Kerusakan', command=hitung)
-tombol.place(x=80, y=630)
+tombol.place(x=50, y=350)
 
+ 
 #plt.tight_layout()
 plt.show()
 window.mainloop()
-
