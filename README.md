@@ -31,3 +31,5 @@ Menggunakan jenis jaringan saraf
 Perhitungan Error 
 1. RMSE (Root mean square error)
 2. MSE (mean square error)
+
+![Internal-Parts-of-Globe-Valve](https://user-images.githubusercontent.com/49284230/172409208-38d0878d-bb56-4a49-9a38-b0402e06e02f.jpg)
