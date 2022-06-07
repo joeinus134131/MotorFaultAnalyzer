@@ -29,5 +29,5 @@ Menggunakan jenis jaringan saraf
 - Multiclass Clasification
 
 Perhitungan Error 
-1. RMSE
-2. MSE
+1. RMSE (Root mean square error)
+2. MSE (mean square error)
