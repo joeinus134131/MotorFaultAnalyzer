@@ -3,8 +3,16 @@
 # MotorFaultAnalyzer
 Detction Motor Fault with Artificial Neural Network
 
-<h2>Installation</h2>
-$~ pip install faultmonitoring
+### Simulation
+
+- To simulate the drone doing sound source localization inside a room, run:
+  ```
+  ros2 launch audio_bringup doa_simulated.launch.py
+  ```
+- To simulate the drone doing wall detection, run:
+  ```
+  ros2 launch audio_bringup wall_simulated.launch.py
+  ```
 
 ![20220409_160543](https://user-images.githubusercontent.com/49284230/162597464-3f57b509-c5fb-4c0d-9943-1f5ccf24fe1c.jpg)
 
